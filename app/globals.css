@@ -3,14 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 128;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-geist-sans), Arial, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+    to bottom right,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb))
+  );
 }
 
 @layer utilities {
@@ -19,33 +23,15 @@ body {
   }
 }
 
-.animate-gradient-x {
-  background-size: 400% 400%;
-  animation: gradient-x 15s ease infinite;
+/* Estilos personalizados */
+.bg-gradient-radial {
+  background-image: radial-gradient(circle at center, #2c3e50, #1a202c);
 }
 
-@keyframes gradient-x {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+.text-glow {
+  text-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
 }
 
-@keyframes gradient-animation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.bg-gradient-to-br {
-  background-size: 200% 200%;
-  animation: gradient-animation 15s ease infinite;
+.hover-glow:hover {
+  box-shadow: 0 0 15px rgba(66, 153, 225, 0.5);
 }
