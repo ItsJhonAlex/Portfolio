@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FaGithub, FaLinkedin, FaEnvelope, FaFileDownload, FaPython, FaReact, FaNodeJs, FaDatabase, FaAngular } from 'react-icons/fa';
 import { SiTypescript } from 'react-icons/si';
 import { Typewriter } from 'react-simple-typewriter';
@@ -96,9 +96,39 @@ function SkillCircle({ skill, icono: Icon, progreso }: SkillCircleProps) {
 }
 
 export default function LandingPage() {
-  const [activeSection, setActiveSection] = useState('home');
+  const [activeSection, setActiveSection] = useState('inicio');
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const sections = ['home', 'proyectos', 'habilidades', 'about'];
+  const sections = useMemo(() => ['inicio', 'proyectos', 'habilidades', 'sobre-mi'], []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const offset = windowHeight / 2;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { top, bottom } = element.getBoundingClientRect();
+          if (top - offset < 0 && bottom - offset > 0) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [sections]);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMenuOpen(false);
+  };
 
   const CodeSnippets = () => {
     return (
@@ -139,15 +169,20 @@ export default function LandingPage() {
             >
               <span className="text-2xl font-bold">JHON ALEX</span>
             </motion.div>
-            <ul className="flex space-x-8">
+            <div className="md:hidden">
+              <button onClick={() => setMenuOpen(!menuOpen)} className="text-white">
+                {menuOpen ? 'Cerrar' : 'Menú'}
+              </button>
+            </div>
+            <ul className={`md:flex md:space-x-8 ${menuOpen ? 'block' : 'hidden'} md:block absolute md:relative top-full left-0 right-0 bg-indigo-900 md:bg-transparent p-4 md:p-0`}>
               {sections.map((section) => (
                 <motion.li key={section}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <button
-                    onClick={() => setActiveSection(section)}
-                    className={`uppercase ${activeSection === section ? 'text-pink-500' : 'text-gray-300'} hover:text-cyan-400`}
+                    onClick={() => scrollToSection(section)}
+                    className={`uppercase ${activeSection === section ? 'text-pink-500' : 'text-gray-300'} hover:text-cyan-400 block w-full text-left md:inline-block md:w-auto`}
                   >
                     {section}
                   </button>
@@ -159,19 +194,19 @@ export default function LandingPage() {
       </nav>
 
       <main className="container mx-auto px-6 pt-24 relative">
-        <section id="home" className="min-h-screen flex flex-col justify-center items-center text-center">
+        <section id="inicio" className="min-h-screen flex flex-col justify-center items-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="max-w-3xl"
           >
-            <h1 className="text-6xl font-bold mb-4">JHON ALEX</h1>
-            <h2 className="text-5xl font-bold mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">JHON ALEX</h1>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">
               <span className="text-pink-500">DESARROLLADOR</span>{' '}
               <span className="text-cyan-400">FULLSTACK</span>
             </h2>
-            <p className="text-xl mb-8">
+            <p className="text-lg md:text-xl mb-8">
               <Typewriter
                 words={frases.frases}
                 loop={0}
@@ -182,20 +217,13 @@ export default function LandingPage() {
                 delaySpeed={2000}
               />
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-pink-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-pink-600 transition-colors"
-            >
-              Contacto
-            </motion.button>
           </motion.div>
         </section>
 
         <div className="fixed right-6 top-1/2 transform -translate-y-1/2 flex flex-col space-y-4">
-          <SocialButton href="https://github.com/tuusuario" icon={<FaGithub />} />
+          <SocialButton href="https://github.com/ItsJhonAlex" icon={<FaGithub />} />
           <SocialButton href="https://linkedin.com/in/tuusuario" icon={<FaLinkedin />} />
-          <SocialButton href="mailto:tu@email.com" icon={<FaEnvelope />} />
+          <SocialButton href="mailto:rodrj0184@gmail.com" icon={<FaEnvelope />} />
           <SocialButton href="/path-to-your-cv.pdf" icon={<FaFileDownload />} />
         </div>
 
@@ -204,7 +232,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-4xl font-bold mb-10 text-center"
+            className="text-3xl md:text-4xl font-bold mb-10 text-center"
           >
             Proyectos Realizados
           </motion.h2>
@@ -245,7 +273,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-4xl font-bold mb-10 text-center"
+            className="text-3xl md:text-4xl font-bold mb-10 text-center"
           >
             Mis Habilidades
           </motion.h2>
@@ -267,6 +295,39 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section id="sobre-mi" className="py-20">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl md:text-4xl font-bold mb-10 text-center"
+          >
+            Sobre Mí
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <p className="text-lg mb-6">
+              Soy un desarrollador de Cuba apasionado por crear soluciones tecnológicas innovadoras. 
+              Me especializo en la creación de bots y scripts para la automatización de tareas, 
+              así como en el trabajo e integración de APIs y el desarrollo web.
+            </p>
+            <p className="text-lg mb-6">
+              Mi enfoque se centra en escribir código limpio y mantenible, siempre buscando 
+              la mejor manera de resolver problemas complejos. Me encanta aprender nuevas tecnologías 
+              y compartir conocimientos con la comunidad de desarrolladores.
+            </p>
+            <p className="text-lg">
+              Cuando no estoy programando, disfruto de la lectura, duermo, aprendo nuevas habilidades 
+              y paso tiempo con mis amistades. Siempre estoy abierto a nuevas oportunidades y 
+              colaboraciones en proyectos emocionantes.
+            </p>
+          </motion.div>
+        </section>
+
         <footer className="bg-indigo-900 py-6 mt-12">
           <div className="container mx-auto px-6 text-center">
             <p className="text-gray-400">© 2024 Jhon Alex. Todos los derechos reservados.</p>
@@ -278,21 +339,21 @@ export default function LandingPage() {
 }
 
 interface SocialButtonProps {
-    href: string;
-    icon: React.ReactNode;
-  }
+  href: string;
+  icon: React.ReactNode;
+}
 
 function SocialButton({ href, icon }: SocialButtonProps) {
-    return (
-      <motion.a
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors"
-      >
-        {icon}
-      </motion.a>
-    );
-  }
+  return (
+    <motion.a
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors"
+    >
+      {icon}
+    </motion.a>
+  );
+}
